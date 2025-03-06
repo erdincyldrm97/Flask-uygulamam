@@ -1,0 +1,1 @@
+#!/bin/sh\npython main.py
