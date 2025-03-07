@@ -14,15 +14,15 @@ RUN apt-get update && apt-get install -y \
     automake \
     && rm -rf /var/lib/apt/lists/*
 
-# TA-Lib'i GitHub'dan klonla ve kur
-RUN git clone https://github.com/mrjbq7/ta-lib.git && \
+# TA-Lib'i indir ve kur
+RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
+    tar -xvzf ta-lib-0.4.0-src.tar.gz && \
     cd ta-lib && \
-    autoreconf --install && \
     ./configure --prefix=/usr && \
     make && \
     make install && \
     cd .. && \
-    rm -rf ta-lib
+    rm -rf ta-lib ta-lib-0.4.0-src.tar.gz
 
 # Çalışma dizinine geç
 WORKDIR /app
