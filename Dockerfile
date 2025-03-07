@@ -1,16 +1,18 @@
-# Python 3.10 bazlı bir imaj kullan
+# Python 3.10 tabanlı imajı kullan
 FROM python:3.10
 
-# Gerekli paketleri yükle
+# Gerekli bağımlılıkları yükle
 RUN apt-get update && apt-get install -y \
     build-essential \
     python3-dev \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
-# TA-Lib kaynak kodlarını indir ve derle
-RUN wget -O ta-lib-0.4.0-src.tar.gz "https://versaweb.dl.sourceforge.net/project/ta-lib/ta-lib/0.4.0/ta-lib-0.4.0-src.tar.gz" && \
+# TA-Lib kaynak kodlarını indir, doğrula ve derle
+RUN wget -O ta-lib-0.4.0-src.tar.gz "http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz" && \
     tar -xvzf ta-lib-0.4.0-src.tar.gz && \
+    ls -la && \
+    mv ta-lib ta-lib-0.4.0 && \
     cd ta-lib-0.4.0 && \
     ./configure --prefix=/usr && \
     make && \
