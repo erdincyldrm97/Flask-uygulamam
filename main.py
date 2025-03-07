@@ -92,6 +92,9 @@ def trade_signal(price, indicators, support, resistance):
     buy_zone = support * 1.02  # Destek seviyesinin biraz üstü
     sell_zone = resistance * 0.98  # Direnç seviyesinin biraz altı
 
+    signal += f"✅ **Kısa Vadeli Alım Bölgesi**: **${format_price(buy_zone)} - ${format_price(support)}** _(Destek yakınında)_\n"
+    signal += f"❌ **Kısa Vadeli Satış Bölgesi**: **${format_price(sell_zone)} - ${format_price(resistance)}** _(Direnç yakınında)_\n"
+
     # **Uzun Vadeli Trend Analizi**
     if sma_50 > sma_200:
         signal += "✅ **Uzun Vadeli Alım Önerisi**: SMA50, SMA200'ü yukarı kesmiş.\n"
@@ -109,12 +112,6 @@ def trade_signal(price, indicators, support, resistance):
         signal += "🚨 **Stochastic RSI**: Aşırı alım (Dikkatli olun).\n"
     elif stoch_rsi_k < 20 and stoch_rsi_d < 20:
         signal += "💰 **Stochastic RSI**: Aşırı satım (Fırsat olabilir).\n"
-
-    # **Long/Short Önerileri**
-    if sma_50 > sma_200 and rsi < 70:
-        signal += f"\n🚀 **Long (Al) Önerisi**: ${format_price(buy_zone)} - ${format_price(support)}\n"
-    elif sma_50 < sma_200 and rsi > 30:
-        signal += f"\n⚠️ **Short (Sat) Önerisi**: ${format_price(sell_zone)} - ${format_price(resistance)}\n"
 
     # **Destek ve Direnç Seviyeleri**
     signal += f"\n📉 **Destek Seviyesi**: ${format_price(support)}\n"
@@ -153,6 +150,15 @@ async def price_command(message: Message):
                 analysis = f"✅ **{coin} Alım/Satım Analizi**:\n\n"
                 analysis += f"💰 **Fiyat**: ${formatted_price}\n"
                 analysis += f"📊 **24h Yüzde Değişim**: %{round(percent_change_24h, 2)}\n"
+                analysis += f"📈 **RSI**: {round(indicators['rsi'], 2)}\n"
+                analysis += f"📉 **MACD**: {round(indicators['macd'], 2)}\n"
+                analysis += f"📊 **MACD Signal**: {round(indicators['macdsignal'], 2)}\n"
+                analysis += f"📈 **SMA 50**: {format_price(indicators['sma_50'])}\n"
+                analysis += f"📉 **SMA 200**: {format_price(indicators['sma_200'])}\n"
+                analysis += f"📊 **Bollinger Üst Band**: {format_price(indicators['upper_band'])}\n"
+                analysis += f"📉 **Bollinger Alt Band**: {format_price(indicators['lower_band'])}\n"
+                analysis += f"📊 **Stochastic RSI K**: {round(indicators['stoch_rsi_k'], 2)}\n"
+                analysis += f"📉 **Stochastic RSI D**: {round(indicators['stoch_rsi_d'], 2)}\n"
 
                 # Ticaret sinyali ekleme
                 signal = trade_signal(price, indicators, support, resistance)
