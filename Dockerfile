@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
 RUN git clone https://github.com/mrjbq7/ta-lib.git && \
     cd ta-lib && \
     autoreconf --install && \  # Autoreconf ile configure dosyasını oluştur
-    ./configure --prefix=/usr && \
+    RUN ./configure --prefix=/usr && \  # RUN komutu eklenmeli
     make && \
     make install && \
     cd .. && \
