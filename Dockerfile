@@ -6,8 +6,18 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     libatlas-base-dev \
     gfortran \
-    libta-lib0-dev \
+    wget \
     && rm -rf /var/lib/apt/lists/*
+
+# TA-Lib'i kaynak kodundan indir ve kur
+RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
+    tar -xvzf ta-lib-0.4.0-src.tar.gz && \
+    cd ta-lib && \
+    ./configure --prefix=/usr && \
+    make && \
+    make install && \
+    cd .. && \
+    rm -rf ta-lib ta-lib-0.4.0-src.tar.gz
 
 # Çalışma dizinini belirle
 WORKDIR /app
