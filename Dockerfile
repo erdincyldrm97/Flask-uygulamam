@@ -27,7 +27,11 @@ WORKDIR /app
 COPY . /app/
 
 # Pip güncelle ve bağımlılıkları yükle
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    gcc \
+    python3-dev \
+    libta-lib-dev
 
 # Uygulamayı başlat
 CMD ["python", "main.py"]
