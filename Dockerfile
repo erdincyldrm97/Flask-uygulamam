@@ -1,4 +1,4 @@
-# Base image
+# Base imag
 FROM python:3.10-slim
 
 # Gerekli sistem bağımlılıklarını yükle
