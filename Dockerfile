@@ -11,11 +11,13 @@ RUN apt-get update && apt-get install -y \
     git \
     autoconf \
     libtool \
+    automake \
     && rm -rf /var/lib/apt/lists/*
 
 # TA-Lib'i GitHub'dan klonla ve kur
 RUN git clone https://github.com/mrjbq7/ta-lib.git && \
     cd ta-lib && \
+    autoreconf --install && \  # Autoreconf ile configure dosyasını oluştur
     ./configure --prefix=/usr && \
     make && \
     make install && \
