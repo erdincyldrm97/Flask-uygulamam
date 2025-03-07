@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
     autoconf \
     libtool \
     automake \
+    libpng-dev \
+    libfreetype6-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # TA-Lib'i indir ve kur
