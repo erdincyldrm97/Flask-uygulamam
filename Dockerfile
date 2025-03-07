@@ -8,6 +8,9 @@ RUN apt-get update && apt-get install -y \
     gfortran \
     wget \
     libffi-dev \
+    libta-lib0-dev \
+    gcc \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
 
 # TA-Lib'i kaynak kodundan indir ve kur
