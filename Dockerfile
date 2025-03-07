@@ -1,33 +1,26 @@
-# Python 3.10 tabanlı imajı kullan
-FROM python:3.10
+# Python 3.10 imajını kullan
+FROM python:3.10-slim
 
-# Gerekli bağımlılıkları yükle
+# Gerekli sistem bağımlılıklarını yükle
 RUN apt-get update && apt-get install -y \
     build-essential \
-    python3-dev \
-    wget \
+    libatlas-base-dev \
+    gfortran \
+    libta-lib0-dev \
     && rm -rf /var/lib/apt/lists/*
-
-# TA-Lib kaynak kodlarını indir, doğrula ve derle
-RUN wget -O ta-lib-0.4.0-src.tar.gz "http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz" && \
-    tar -xvzf ta-lib-0.4.0-src.tar.gz && \
-    ls -la && \
-    mv ta-lib ta-lib-0.4.0 && \
-    cd ta-lib-0.4.0 && \
-    ./configure --prefix=/usr && \
-    make && \
-    make install && \
-    cd .. && \
-    rm -rf ta-lib-0.4.0 ta-lib-0.4.0-src.tar.gz
 
 # Çalışma dizinini belirle
 WORKDIR /app
 
-# Proje dosyalarını kopyala
-COPY . /app/
+# requirements.txt dosyasını kopyala
+COPY requirements.txt .
 
-# Pip güncelle ve bağımlılıkları yükle
+# pip güncelle
+RUN pip install --upgrade pip
+
+# Gereksinimleri yükle
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Uygulamayı başlat
-CMD ["python", "main.py"]
+COPY . /app
+CMD ["python", "app.py"]
