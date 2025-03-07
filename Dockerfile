@@ -1,4 +1,4 @@
-# Python 3.10 imajını kullan
+# Python 3.10 imajını kulla
 FROM python:3.10-slim
 
 # Gerekli sistem bağımlılıklarını yükle
