@@ -1,4 +1,4 @@
-# Temel Python 3.10 slim imajını kullanıyoruz
+# Temel Python 3.10 slim imajını kullanıyoru
 FROM python:3.10-slim
 
 # Çalışma dizini oluşturuyoruz
