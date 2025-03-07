@@ -1,5 +1,5 @@
 from aiogram import Bot, Dispatcher, types
-from aiogram.types import Message, InputFile
+from aiogram.types import Message, BufferedInputFile
 from aiogram.filters import Command
 from aiogram.exceptions import TelegramBadRequest
 import asyncio
@@ -164,9 +164,9 @@ async def price_command(message: Message):
                 signal = trade_signal(price, indicators, support, resistance)
                 analysis += f"\n🚀 **Ticaret Sinyali**:\n{signal}\n"
 
-                # Fiyat grafiği oluşturma ve InputFile'a dönüştürme
+                # Fiyat grafiği oluşturma ve BufferedInputFile'a dönüştürme
                 chart = plot_price_chart(historical_data, coin)
-                input_file = InputFile(chart, filename=f"{coin}_price_chart.png")
+                input_file = BufferedInputFile(chart.getvalue(), filename=f"{coin}_price_chart.png")
                 await message.answer_photo(photo=input_file, caption=analysis)
             else:
                 await message.answer(f"{coin} için geçmiş veri bulunamadı.")
