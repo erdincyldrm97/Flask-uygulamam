@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     libatlas-base-dev \
     gfortran \
     wget \
+    libffi-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # TA-Lib'i kaynak kodundan indir ve kur
