@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y \
     wget \
     libffi-dev \
     git \
+    autoconf \
+    libtool \
     && rm -rf /var/lib/apt/lists/*
 
 # TA-Lib'i GitHub'dan klonla ve kur
@@ -36,4 +38,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . /app
 
 # Uygulamanı başlat
-CMD ["python", "main.py"]
+CMD ["python", "app.py"]
