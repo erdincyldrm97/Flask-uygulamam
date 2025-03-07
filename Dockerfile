@@ -1,40 +1,39 @@
-# Python 3.10 imajını kullan
+# Python 3.10 slim image'ını kullanıyoruz
 FROM python:3.10-slim
 
-# Gerekli sistem bağımlılıklarını yükle
+# Sistem paketlerini güncelle ve gerekli araçları kur
 RUN apt-get update && apt-get install -y \
     build-essential \
     libatlas-base-dev \
     gfortran \
     wget \
     libffi-dev \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
-# TA-Lib'i kaynak kodundan indir ve kur
-RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.37-src.tar.gz && \
-    tar -xvzf ta-lib-0.4.37-src.tar.gz && \
+# TA-Lib'i GitHub'dan klonla ve kur
+RUN git clone https://github.com/mrjbq7/ta-lib.git && \
     cd ta-lib && \
     ./configure --prefix=/usr && \
     make && \
     make install && \
     cd .. && \
-    rm -rf ta-lib ta-lib-0.4.37-src.tar.gz
+    rm -rf ta-lib
 
-# TA-Lib kütüphanesinin yüklediğimiz yolunu sistem kütüphanelerine ekle
-ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
-
-# Çalışma dizinini belirle
+# Çalışma dizinine geç
 WORKDIR /app
 
 # requirements.txt dosyasını kopyala
 COPY requirements.txt .
 
-# pip güncelle
+# pip'i güncelle
 RUN pip install --upgrade pip
 
-# Gereksinimleri yükle
+# Gerekli Python paketlerini yükle
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Uygulamayı başlat
+# Uygulama kodlarını kopyala
 COPY . /app
+
+# Uygulamanı başlat
 CMD ["python", "main.py"]
