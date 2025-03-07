@@ -20,6 +20,9 @@ RUN wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz && \
     cd .. && \
     rm -rf ta-lib ta-lib-0.4.0-src.tar.gz
 
+# TA-Lib kütüphanesinin yüklediğimiz yolunu sistem kütüphanelerine ekle
+ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
+
 # Çalışma dizinini belirle
 WORKDIR /app
 
