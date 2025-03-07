@@ -6,6 +6,8 @@ import asyncio
 import requests
 import talib
 import numpy as np
+import matplotlib.pyplot as plt
+from io import BytesIO
 
 # Telegram Bot Token ve CoinMarketCap API Anahtarı
 TOKEN = "7867509256:AAF0Vk44_F0_Otxbfkr87LUVMmh2f6hy7kA"
@@ -57,6 +59,7 @@ def calculate_technical_indicators(prices):
     sma_50 = talib.SMA(prices, timeperiod=50)[-1]
     sma_200 = talib.SMA(prices, timeperiod=200)[-1]
     upper_band, _, lower_band = talib.BBANDS(prices, timeperiod=20, nbdevup=2, nbdevdn=2)
+    stoch_rsi = talib.STOCHRSI(prices, timeperiod=14, fastk_period=3, fastd_period=3)[-1]
     return {
         "rsi": rsi,
         "macd": macd[-1],
@@ -64,7 +67,9 @@ def calculate_technical_indicators(prices):
         "sma_50": sma_50,
         "sma_200": sma_200,
         "upper_band": upper_band[-1],
-        "lower_band": lower_band[-1]
+        "lower_band": lower_band[-1],
+        "stoch_rsi_k": stoch_rsi[0],
+        "stoch_rsi_d": stoch_rsi[1]
     }
 
 def calculate_support_resistance(prices):
@@ -72,10 +77,14 @@ def calculate_support_resistance(prices):
 
 def trade_signal(price, indicators, support, resistance):
     rsi = indicators["rsi"]
+    macd = indicators["macd"]
+    macdsignal = indicators["macdsignal"]
     sma_50 = indicators["sma_50"]
     sma_200 = indicators["sma_200"]
     upper_band = indicators["upper_band"]
     lower_band = indicators["lower_band"]
+    stoch_rsi_k = indicators["stoch_rsi_k"]
+    stoch_rsi_d = indicators["stoch_rsi_d"]
 
     signal = ""
 
@@ -98,11 +107,30 @@ def trade_signal(price, indicators, support, resistance):
     elif price < lower_band:
         signal += "💰 **Bollinger Alt Bandı**: Aşırı satım (Fırsat olabilir).\n"
 
+    # **Stochastic RSI Analizi**
+    if stoch_rsi_k > 80 and stoch_rsi_d > 80:
+        signal += "🚨 **Stochastic RSI**: Aşırı alım (Dikkatli olun).\n"
+    elif stoch_rsi_k < 20 and stoch_rsi_d < 20:
+        signal += "💰 **Stochastic RSI**: Aşırı satım (Fırsat olabilir).\n"
+
     # **Destek ve Direnç Seviyeleri**
     signal += f"\n📉 **Destek Seviyesi**: ${format_price(support)}\n"
     signal += f"📈 **Direnç Seviyesi**: ${format_price(resistance)}\n"
 
     return signal
+
+def plot_price_chart(prices, coin):
+    plt.figure(figsize=(10, 5))
+    plt.plot(prices, label=f"{coin} Fiyat")
+    plt.title(f"{coin} Fiyat Grafiği")
+    plt.xlabel("Gün")
+    plt.ylabel("Fiyat (USD)")
+    plt.legend()
+    buf = BytesIO()
+    plt.savefig(buf, format="png")
+    buf.seek(0)
+    plt.close()
+    return buf
 
 @dp.message(Command(commands=["price"]))
 async def price_command(message: Message):
@@ -129,12 +157,16 @@ async def price_command(message: Message):
                 analysis += f"📉 **SMA 200**: {format_price(indicators['sma_200'])}\n"
                 analysis += f"📊 **Bollinger Üst Band**: {format_price(indicators['upper_band'])}\n"
                 analysis += f"📉 **Bollinger Alt Band**: {format_price(indicators['lower_band'])}\n"
+                analysis += f"📊 **Stochastic RSI K**: {round(indicators['stoch_rsi_k'], 2)}\n"
+                analysis += f"📉 **Stochastic RSI D**: {round(indicators['stoch_rsi_d'], 2)}\n"
 
                 # Ticaret sinyali ekleme
                 signal = trade_signal(price, indicators, support, resistance)
                 analysis += f"\n🚀 **Ticaret Sinyali**:\n{signal}\n"
 
-                await message.answer(analysis)
+                # Fiyat grafiği oluşturma
+                chart = plot_price_chart(historical_data, coin)
+                await message.answer_photo(photo=chart, caption=analysis)
             else:
                 await message.answer(f"{coin} için geçmiş veri bulunamadı.")
         else:
@@ -149,4 +181,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-    
